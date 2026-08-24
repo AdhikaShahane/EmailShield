@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmailShield</title>
+  <style>
+    /* ── Reset & Base ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:    #080e1a;
+      --bg-card:    #0f1c2e;
+      --bg-row:     #132035;
+      --border:     rgba(255,255,255,0.07);
+      --text-1:     #f0f4f8;
+      --text-2:     #8da4bf;
+      --text-3:     #4a6282;
+      --green:      #22c55e;
+      --green-dim:  rgba(34,197,94,0.12);
+      --orange:     #f59e0b;
+      --orange-dim: rgba(245,158,11,0.12);
+      --red:        #ef4444;
+      --red-dim:    rgba(239,68,68,0.12);
+      --blue:       #3b82f6;
+      --radius:     10px;
+      --font:       -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    body {
+      width: 360px;
+      min-height: 200px;
+      background: var(--bg-base);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .header-logo {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.02em;
+      color: var(--text-1);
+    }
+
+    .header-sub {
+      font-size: 10px;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .header-badge {
+      margin-left: auto;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(59,130,246,0.15);
+      color: #93c5fd;
+      border: 1px solid rgba(59,130,246,0.25);
+    }
+
+    /* ── Score Ring ──────────────────────────────────────────── */
+    .score-section {
+      padding: 20px 16px 16px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .score-ring-wrap {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+    }
+
+    .score-ring-wrap svg {
+      transform: rotate(-90deg);
+    }
+
+    .score-ring-track {
+      fill: none;
+      stroke: rgba(255,255,255,0.06);
+      stroke-width: 6;
+    }
+
+    .score-ring-fill {
+      fill: none;
+      stroke-width: 6;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  stroke 0.4s ease;
+    }
+
+    .score-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-number {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .score-pct {
+      font-size: 10px;
+      color: var(--text-3);
+      font-weight: 600;
+    }
+
+    .score-meta {
+      flex: 1;
+    }
+
+    .verdict-label {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 5px;
+    }
+
+    .verdict-sub {
+      font-size: 11px;
+      color: var(--text-2);
+      line-height: 1.4;
+    }
+
+    /* Verdict color theming */
+    body.verdict-safe   .score-number,
+    body.verdict-safe   .verdict-label  { color: var(--green); }
+    body.verdict-fraud  .score-number,
+    body.verdict-fraud  .verdict-label  { color: var(--red); }
+    body.verdict-suspicious .score-number,
+    body.verdict-suspicious .verdict-label { color: var(--orange); }
+
+    /* ── Divider ─────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 16px;
+    }
+
+    /* ── Section Title ───────────────────────────────────────── */
+    .section-title {
+      padding: 12px 16px 8px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    /* ── Auth Checks Grid ────────────────────────────────────── */
+    .checks-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 0 16px 14px;
+    }
+
+    .check-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: default;
+      transition: border-color 0.15s;
+    }
+
+    .check-chip:hover { border-color: rgba(255,255,255,0.15); }
+
+    .check-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+
+    .check-icon.pass { background: var(--green-dim); color: var(--green); }
+    .check-icon.fail { background: var(--red-dim);   color: var(--red);   }
+    .check-icon.warn { background: var(--orange-dim);color: var(--orange);}
+
+    .check-info { min-width: 0; }
+
+    .check-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+
+    .check-status {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .check-status.pass { color: var(--green); }
+    .check-status.fail { color: var(--red); }
+    .check-status.warn { color: var(--orange); }
+
+    /* ── Reasons List ────────────────────────────────────────── */
+    .reasons-list {
+      padding: 0 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .reason-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: var(--bg-card);
+      border-radius: 8px;
+      padding: 9px 11px;
+      border-left: 3px solid transparent;
+    }
+
+    .reason-item.high   { border-color: var(--red);    background: rgba(239,68,68,0.05); }
+    .reason-item.medium { border-color: var(--orange);  background: rgba(245,158,11,0.05); }
+    .reason-item.low    { border-color: var(--blue);    background: rgba(59,130,246,0.05); }
+    .reason-item.none   { border-color: var(--green);   background: rgba(34,197,94,0.05); }
+
+    .reason-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .reason-item.high   .reason-dot { background: var(--red); }
+    .reason-item.medium .reason-dot { background: var(--orange); }
+    .reason-item.low    .reason-dot { background: var(--blue); }
+    .reason-item.none   .reason-dot { background: var(--green); }
+
+    .reason-text {
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.45;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    .footer {
+      padding: 10px 16px 14px;
+      text-align: center;
+      font-size: 10px;
+      color: var(--text-3);
+      border-top: 1px solid var(--border);
+    }
+
+    .footer a {
+      color: #60a5fa;
+      text-decoration: none;
+    }
+
+    /* ── Empty / Loading States ──────────────────────────────── */
+    .state-empty {
+      padding: 32px 20px;
+      text-align: center;
+    }
+
+    .state-empty-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .state-empty-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .state-empty-sub {
+      font-size: 12px;
+      color: var(--text-3);
+      line-height: 1.5;
+    }
+
+    .loading-dots {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      padding: 32px 0;
+    }
+
+    .loading-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--blue);
+      animation: ld 1.2s ease-in-out infinite;
+    }
+
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes ld {
+      0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+      40%            { opacity: 1;   transform: scale(1.1); }
+    }
+
+    /* ── Scan button ─────────────────────────────────────────── */
+    .scan-btn {
+      display: block;
+      margin: 12px 16px 0;
+      width: calc(100% - 32px);
+      padding: 10px;
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .scan-btn:hover   { opacity: 0.85; }
+    .scan-btn:active  { opacity: 0.7; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-logo">🛡</div>
+    <div>
+      <div class="header-title">EmailShield</div>
+      <div class="header-sub">Fraud Detection</div>
+    </div>
+    <span class="header-badge" id="badgePlatform">Gmail</span>
+  </div>
+
+  <!-- Dynamic content injected here -->
+  <div id="app"></div>
+
+  <div class="footer">
+    Powered by EmailShield v1.0 — <a href="#">Documentation</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
