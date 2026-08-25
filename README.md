@@ -67,7 +67,9 @@ The browser-extension popup provides:
 - Explanation of detected risk factors
 
 ---
-
+<img width="1687" height="816" alt="Image" src="https://github.com/user-attachments/assets/f45a6d25-4cfb-46e6-ab61-8a54a694c61d" />
+<img width="462" height="752" alt="Image" src="https://github.com/user-attachments/assets/7bb5e7f7-a468-40dd-a67e-17e636bcfbd3" />
+<img width="853" height="793" alt="Image" src="https://github.com/user-attachments/assets/d993faea-00b7-4410-a53d-7653d9560637" />
 ## 🧠 How It Works
 
 ```text
