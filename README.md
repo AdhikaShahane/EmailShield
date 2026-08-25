@@ -114,6 +114,4 @@ The browser-extension popup provides:
                   │ Security Report  │
                   └──────────────────┘
 
-<img width="853" height="793" alt="Image" src="https://github.com/user-attachments/assets/7e42a77d-5f7c-4434-bf82-9df9c06d82b4" />
-<img width="462" height="752" alt="Image" src="https://github.com/user-attachments/assets/3d13664e-5787-4bce-8fea-1937d8d98533" />
-<img width="1687" height="816" alt="Image" src="https://github.com/user-attachments/assets/c7d0ac1c-8a80-44ea-961f-f0a05e16e522" />
+<img width="853" height="793" alt="Image" src="https://github.com/user-attachments/assets/e0a2eedd-91d5-4b7c-a557-45bd3b865229" />
